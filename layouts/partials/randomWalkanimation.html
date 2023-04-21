@@ -1,0 +1,76 @@
+	<canvas id="canvas"></canvas>
+	<script>
+		// Get canvas element and context
+		var canvas = document.getElementById("canvas");
+		var ctx = canvas.getContext("2d");
+
+		// Set canvas dimensions to fill the screen
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+
+
+
+        function animateRandomWalk() {
+          var x = canvas.width / 2;
+          var y = canvas.height / 2;
+          var fibonacci = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377];
+          var hue = 0;
+
+          function draw() {
+            // Use a bias towards angles that are multiples of 45 degrees
+            var angleBias = Math.floor(Math.random() * 8) * Math.PI / 4;
+            var angle = angleBias + (Math.random() - 0.5) * Math.PI / 4;
+
+            var index = Math.floor(Math.random() * fibonacci.length);
+            var stepSize = fibonacci[index];
+            x += Math.cos(angle) * stepSize;
+            y += Math.sin(angle) * stepSize;
+            if (x < 0) x = 0;
+            if (y < 0) y = 0;
+            if (x > canvas.width) x = canvas.width;
+            if (y > canvas.height) y = canvas.height;
+
+            // Set the stroke style to a rainbow gradient based on the angle
+            hue = (hue + 1) % 360;
+var gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+gradient.addColorStop(0, 'hsl(0, 100%, 50%)'); // Red
+gradient.addColorStop(0.166, 'hsl(60, 100%, 50%)'); // Yellow
+gradient.addColorStop(0.333, 'hsl(120, 100%, 50%)'); // Green
+gradient.addColorStop(0.5, 'hsl(180, 100%, 50%)'); // Cyan
+gradient.addColorStop(0.666, 'hsl(240, 100%, 50%)'); // Blue
+gradient.addColorStop(0.833, 'hsl(300, 100%, 50%)'); // Magenta
+gradient.addColorStop(1, 'hsl(0, 100%, 50%)'); // Red
+ctx.strokeStyle = gradient;
+
+            if (stepSize === 1) {
+              // Start a new path
+              ctx.beginPath();
+              ctx.moveTo(x, y);
+            } else {
+              // Continue the previous path
+              ctx.lineTo(x, y);
+              ctx.stroke();
+            }
+
+            // Schedule the next frame
+            requestAnimationFrame(draw);
+          }
+
+          // Start the animation
+          draw();
+        }
+
+
+
+
+
+		// Call the random walk function to draw on the canvas
+		animateRandomWalk();
+
+		// Redraw the canvas on window resize
+		window.onresize = function() {
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+			animateRandomWalk();
+		};
+	</script>
